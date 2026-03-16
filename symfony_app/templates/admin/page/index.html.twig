@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Админ | Страницы{% endblock %}
+
+{% block body %}
+    <section class="p-4 rounded-4 bg-white shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Управление страницами</h1>
+            <a class="btn btn-dark" href="{{ path('admin_page_new') }}">Новая страница</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Slug</th>
+                        <th>System key</th>
+                        <th>В меню</th>
+                        <th>Опубликована</th>
+                        <th>Позиция</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page in pages %}
+                        <tr>
+                            <td>{{ page.id }}</td>
+                            <td>{{ page.title }}</td>
+                            <td><code>{{ page.slug }}</code></td>
+                            <td>{{ page.systemKey ?: '-' }}</td>
+                            <td>{{ page.showInMenu ? 'Да' : 'Нет' }}</td>
+                            <td>{{ page.published ? 'Да' : 'Нет' }}</td>
+                            <td>{{ page.position }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-dark" href="{{ path('admin_page_edit', {id: page.id}) }}">Редактировать</a>
+                                <form method="post" action="{{ path('admin_page_delete', {id: page.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_page_' ~ page.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger" {% if page.systemKey %}disabled{% endif %}>Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">Страницы не найдены.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

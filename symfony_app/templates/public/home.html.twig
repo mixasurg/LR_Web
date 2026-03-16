@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page.title }} | Mixas Art Works{% endblock %}
+
+{% block body %}
+    <section class="p-4 p-md-5 rounded-4 home-hero mb-4">
+        <h1 class="display-6 mb-3">{{ page.title }}</h1>
+        <div class="mb-0 page-content">{{ page.content|raw }}</div>
+    </section>
+
+    <section class="row g-3 mb-4">
+        <div class="col-md-4">
+            <a class="quick-card d-block p-3 rounded-4 text-decoration-none" href="{{ path('app_contacts') }}">
+                <h2 class="h5 mb-2">Контакты</h2>
+                <p class="mb-0">Связь для вопросов, отзывов и предложений.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="quick-card d-block p-3 rounded-4 text-decoration-none" href="{{ path('app_gallery') }}">
+                <h2 class="h5 mb-2">Фотогалерея</h2>
+                <p class="mb-0">Работы по Warhammer 40k, Horus Heresy и AoS.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="quick-card d-block p-3 rounded-4 text-decoration-none" href="{{ path('app_feedback') }}">
+                <h2 class="h5 mb-2">Обратная связь</h2>
+                <p class="mb-0">Оставьте комментарий о работах.</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 mb-3">Избранные работы</h2>
+        <div class="row g-3">
+            {% for work in works %}
+                <div class="col-md-4">
+                    <article class="card work-card h-100 shadow-sm border-0">
+                        {% set cover = work.coverPhoto %}
+                        {% if cover %}
+                            <img src="{{ asset(cover.imagePath) }}" class="card-img-top gallery-thumb enlargeable-image" alt="{{ work.title }}" data-enlargeable data-fullsrc="{{ asset(cover.imagePath) }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h3 class="h6">{{ work.title }}</h3>
+                            <p class="small text-muted mb-3">{{ work.description|striptags|slice(0, 110) }}{% if work.description|striptags|length > 110 %}...{% endif %}</p>
+                            <a href="{{ path('app_work_show', {slug: work.slug}) }}" class="btn btn-sm btn-outline-dark">Открыть</a>
+                        </div>
+                    </article>
+                </div>
+            {% else %}
+                <p class="text-muted">В галерее пока нет работ.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

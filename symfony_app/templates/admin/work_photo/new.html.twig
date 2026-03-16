@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Новое фото | Админ{% endblock %}
+
+{% block body %}
+    <section class="p-4 rounded-4 bg-white shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Добавление фото</h1>
+            <a class="btn btn-outline-dark" href="{{ path('admin_work_photo_index') }}">К списку</a>
+        </div>
+        {{ include('admin/work_photo/_form.html.twig', {form: form, button_label: 'Добавить'}) }}
+    </section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{{ form_start(form) }}
+    <div class="row g-3">
+        <div class="col-md-8">
+            {{ form_row(form.title) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.menuTitle) }}
+        </div>
+        <div class="col-md-8">
+            {{ form_row(form.slug) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.position) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(form.content) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.showInMenu) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.isPublished) }}
+        </div>
+    </div>
+    <button class="btn btn-dark mt-3">{{ button_label|default('Сохранить') }}</button>
+{{ form_end(form) }}

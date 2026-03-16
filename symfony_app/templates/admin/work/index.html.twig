@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Админ | Работы{% endblock %}
+
+{% block body %}
+    <section class="p-4 rounded-4 bg-white shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Управление работами</h1>
+            <a class="btn btn-dark" href="{{ path('admin_work_new') }}">Добавить работу</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Slug</th>
+                        <th>Позиция</th>
+                        <th>Опубликовано</th>
+                        <th>Фото</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for work in works %}
+                        <tr>
+                            <td>{{ work.id }}</td>
+                            <td>{{ work.title }}</td>
+                            <td><code>{{ work.slug }}</code></td>
+                            <td>{{ work.sortOrder }}</td>
+                            <td>{{ work.published ? 'Да' : 'Нет' }}</td>
+                            <td>{{ work.photoCount }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-dark" href="{{ path('admin_work_edit', {id: work.id}) }}">Редактировать</a>
+                                <form method="post" action="{{ path('admin_work_delete', {id: work.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_work_' ~ work.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Работ пока нет.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

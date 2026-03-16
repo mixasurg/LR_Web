@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Админ | Фото работ{% endblock %}
+
+{% block body %}
+    <section class="p-4 rounded-4 bg-white shadow-sm">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h1 class="h3 mb-0">Управление фото</h1>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-dark" href="{{ path('admin_work_index') }}">Работы</a>
+                <a class="btn btn-dark" href="{{ path('admin_work_photo_new') }}">Добавить фото</a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Превью</th>
+                        <th>Работа</th>
+                        <th>Путь</th>
+                        <th>Позиция</th>
+                        <th>Опубликовано</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for photo in photos %}
+                        <tr>
+                            <td>{{ photo.id }}</td>
+                            <td><img src="{{ asset(photo.imagePath) }}" alt="{{ photo.caption ?: photo.work.title }}" class="admin-thumb"></td>
+                            <td>{{ photo.work.title }}</td>
+                            <td><code>{{ photo.imagePath }}</code></td>
+                            <td>{{ photo.sortOrder }}</td>
+                            <td>{{ photo.published ? 'Да' : 'Нет' }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-dark" href="{{ path('admin_work_photo_edit', {id: photo.id}) }}">Редактировать</a>
+                                <form method="post" action="{{ path('admin_work_photo_delete', {id: photo.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_work_photo_' ~ photo.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Фото пока нет.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}
