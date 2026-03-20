@@ -42,6 +42,9 @@ class Work
     #[ORM\Column]
     private bool $isPublished = true;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isFeatured = false;
+
     #[ORM\Column]
     #[Assert\Range(min: 0, max: 1000, notInRangeMessage: 'Позиция должна быть от 0 до 1000.')]
     private int $sortOrder = 100;
@@ -113,6 +116,18 @@ class Work
         return $this;
     }
 
+    public function isFeatured(): bool
+    {
+        return $this->isFeatured;
+    }
+
+    public function setIsFeatured(bool $isFeatured): static
+    {
+        $this->isFeatured = $isFeatured;
+
+        return $this;
+    }
+
     public function getSortOrder(): int
     {
         return $this->sortOrder;
@@ -161,6 +176,28 @@ class Work
         return count($this->getPublishedPhotos());
     }
 
+    public function getVisualTheme(): string
+    {
+        foreach ($this->getPublishedPhotos() as $photo) {
+            $theme = self::detectThemeFromText((string) $photo->getImagePath());
+            if ($theme !== null) {
+                return $theme;
+            }
+        }
+
+        $theme = self::detectThemeFromText((string) $this->slug);
+        if ($theme !== null) {
+            return $theme;
+        }
+
+        $theme = self::detectThemeFromText((string) $this->title);
+        if ($theme !== null) {
+            return $theme;
+        }
+
+        return 'blood-angels';
+    }
+
     public function addPhoto(WorkPhoto $photo): static
     {
         if (!$this->photos->contains($photo)) {
@@ -184,5 +221,25 @@ class Work
     public function initializeCreatedAt(): void
     {
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    private static function detectThemeFromText(string $value): ?string
+    {
+        $normalized = mb_strtolower(trim($value));
+        if ($normalized === '') {
+            return null;
+        }
+
+        if (str_contains($normalized, 'heresy')) {
+            return 'sons-of-horus';
+        }
+
+        if (str_contains($normalized, '/aos/')
+            || str_contains($normalized, 'stormcast')
+            || str_contains($normalized, 'sigmar')) {
+            return 'stormcast';
+        }
+
+        return null;
     }
 }

@@ -7,6 +7,14 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.media_base_url: '%env(string:MEDIA_BASE_URL)%'
+    app.r2_endpoint: '%env(string:R2_ENDPOINT)%'
+    app.r2_bucket: '%env(string:R2_BUCKET)%'
+    app.r2_access_key_id: '%env(string:R2_ACCESS_KEY_ID)%'
+    app.r2_secret_access_key: '%env(string:R2_SECRET_ACCESS_KEY)%'
+    app.r2_region: '%env(string:R2_REGION)%'
+    app.r2_images_prefix: '%env(string:R2_IMAGES_PREFIX)%'
+    app.r2_list_limit: '%env(int:R2_LIST_LIMIT)%'
 
 services:
     # default configuration for services in *this* file
@@ -18,6 +26,20 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+
+    App\Service\MediaUrlGenerator:
+        arguments:
+            $mediaBaseUrl: '%app.media_base_url%'
+
+    App\Service\R2ImageStorageBrowser:
+        arguments:
+            $r2Endpoint: '%app.r2_endpoint%'
+            $r2Bucket: '%app.r2_bucket%'
+            $r2AccessKeyId: '%app.r2_access_key_id%'
+            $r2SecretAccessKey: '%app.r2_secret_access_key%'
+            $r2Region: '%app.r2_region%'
+            $r2ImagesPrefix: '%app.r2_images_prefix%'
+            $r2ListLimit: '%app.r2_list_limit%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -17,7 +17,6 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Превью</th>
                         <th>Работа</th>
                         <th>Путь</th>
                         <th>Позиция</th>
@@ -29,7 +28,6 @@
                     {% for photo in photos %}
                         <tr>
                             <td>{{ photo.id }}</td>
-                            <td><img src="{{ asset(photo.imagePath) }}" alt="{{ photo.caption ?: photo.work.title }}" class="admin-thumb"></td>
                             <td>{{ photo.work.title }}</td>
                             <td><code>{{ photo.imagePath }}</code></td>
                             <td>{{ photo.sortOrder }}</td>
@@ -44,7 +42,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="7" class="text-center text-muted">Фото пока нет.</td>
+                            <td colspan="6" class="text-center text-muted">Фото пока нет.</td>
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -9,6 +9,7 @@ services:
       APP_ENV: dev
       APP_SECRET: ${APP_SECRET:-lab-visit-card-secret-key}
       DATABASE_URL: sqlite:///%kernel.project_dir%/var/data.db
+      MEDIA_BASE_URL: ${MEDIA_BASE_URL:-https://pub-eadb1bf23408490799c343bd8ff75d90.r2.dev}
     volumes:
       - ./:/var/www/html
       - symfony_vendor:/var/www/html/vendor

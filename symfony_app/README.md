@@ -44,3 +44,22 @@ docker-compose exec -T php composer install
 
 - Email: `admin@mixas.local`
 - Пароль: `Admin123!`
+
+## Выбор фото из R2 в админке
+
+В форме создания/редактирования работы есть поле `Фото из R2 для этой работы`.
+После сохранения выбранные пути автоматически добавляются как фото работы.
+
+Чтобы включить список файлов из R2, задай переменные окружения:
+
+```dotenv
+R2_ENDPOINT=https://<accountid>.r2.cloudflarestorage.com
+R2_BUCKET=<bucket-name>
+R2_ACCESS_KEY_ID=<access-key-id>
+R2_SECRET_ACCESS_KEY=<secret-access-key>
+R2_REGION=auto
+R2_IMAGES_PREFIX=mixas-works/
+R2_LIST_LIMIT=500
+```
+
+Если credentials не заданы, форма остаётся рабочей, но выбор из хранилища отключен.

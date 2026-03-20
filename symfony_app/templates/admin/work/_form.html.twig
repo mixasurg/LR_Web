@@ -9,9 +9,56 @@
         <div class="col-md-4">
             {{ form_row(form.sortOrder) }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
             {{ form_row(form.isPublished) }}
         </div>
+        <div class="col-md-4">
+            {{ form_row(form.isFeatured) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(form.storageImagePaths) }}
+            {% if storageLoadError is defined and storageLoadError %}
+                <div class="text-warning small mt-1">{{ storageLoadError }}</div>
+            {% endif %}
+        </div>
+        {% if currentPhotos is defined %}
+            <div class="col-12">
+                <label class="form-label">Текущие фото (можно удалить)</label>
+                {% if currentPhotos %}
+                    <div class="row g-3">
+                        {% for photo in currentPhotos %}
+                            <div class="col-sm-6 col-xl-4">
+                                <article class="card work-card h-100 border-0 shadow-sm">
+                                    <img src="{{ media_url(photo.path) }}" class="card-img-top gallery-thumb" alt="{{ photo.caption ?: ('Фото #' ~ photo.id) }}">
+                                    <div class="card-body p-2">
+                                        <div class="form-check">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                name="remove_photo_ids[]"
+                                                id="remove-photo-{{ photo.id }}"
+                                                value="{{ photo.id }}"
+                                                {% if selectedPhotoIdsToRemove is defined and photo.id in selectedPhotoIdsToRemove %}checked{% endif %}
+                                            >
+                                            <label class="form-check-label small" for="remove-photo-{{ photo.id }}">
+                                                Удалить #{{ photo.id }}
+                                            </label>
+                                        </div>
+                                        <div class="small mt-1"><code>{{ photo.path }}</code></div>
+                                        <div class="small text-muted mt-1">
+                                            Позиция: {{ photo.sortOrder }} · {{ photo.isPublished ? 'Опубликовано' : 'Скрыто' }}
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-text mt-2">Отметь фото для удаления и нажми «Сохранить».</div>
+                {% else %}
+                    <div class="small text-muted">У этой работы пока нет фото.</div>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="col-12">
             {{ form_row(form.description) }}
         </div>

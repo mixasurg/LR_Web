@@ -11,12 +11,14 @@
     <section class="row g-4">
         {% for work in works %}
             <div class="col-sm-6 col-lg-4">
-                <article class="card work-card h-100 border-0 shadow-sm">
+                {% set themeLabel = work.visualTheme == 'sons-of-horus' ? 'Horus Heresy' : (work.visualTheme == 'stormcast' ? 'Age of Sigmar' : 'Warhammer 40k') %}
+                <article class="card work-card work-card--{{ work.visualTheme }} h-100 border-0 shadow-sm">
                     {% set cover = work.coverPhoto %}
                     {% if cover %}
-                        <img src="{{ asset(cover.imagePath) }}" class="card-img-top gallery-thumb enlargeable-image" alt="{{ work.title }}" data-enlargeable data-fullsrc="{{ asset(cover.imagePath) }}">
+                        <img src="{{ media_url(cover.imagePath) }}" class="card-img-top gallery-thumb enlargeable-image" alt="{{ work.title }}" data-enlargeable data-fullsrc="{{ media_url(cover.imagePath) }}">
                     {% endif %}
                     <div class="card-body">
+                        <span class="theme-chip theme-chip--{{ work.visualTheme }}">{{ themeLabel }}</span>
                         <h2 class="h6 mb-2">{{ work.title }}</h2>
                         <p class="small text-muted mb-3">{{ work.description|striptags|slice(0, 120) }}{% if work.description|striptags|length > 120 %}...{% endif %}</p>
                         <div class="d-flex justify-content-between align-items-center">

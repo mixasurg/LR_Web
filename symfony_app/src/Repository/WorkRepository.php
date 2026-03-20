@@ -52,4 +52,41 @@ class WorkRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @return list<Work>
+     */
+    public function findPublishedFeatured(int $limit = 6): array
+    {
+        return $this->createQueryBuilder('w')
+            ->leftJoin('w.photos', 'p', 'WITH', 'p.isPublished = :photoPublished')
+            ->addSelect('p')
+            ->andWhere('w.isPublished = :published')
+            ->andWhere('w.isFeatured = :featured')
+            ->setParameter('published', true)
+            ->setParameter('featured', true)
+            ->setParameter('photoPublished', true)
+            ->orderBy('w.sortOrder', 'ASC')
+            ->addOrderBy('w.title', 'ASC')
+            ->addOrderBy('p.sortOrder', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->setMaxResults(max(1, min(6, $limit)))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countFeaturedWorks(?int $excludeWorkId = null): int
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->select('COUNT(w.id)')
+            ->andWhere('w.isFeatured = :featured')
+            ->setParameter('featured', true);
+
+        if ($excludeWorkId !== null) {
+            $qb->andWhere('w.id <> :excludeWorkId')
+                ->setParameter('excludeWorkId', $excludeWorkId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }

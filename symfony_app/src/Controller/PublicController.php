@@ -28,28 +28,38 @@ class PublicController extends AbstractController
     public function home(): Response
     {
         $page = $this->getSystemPageOr404('home');
-        $works = array_slice($this->workRepository->findPublishedOrdered(), 0, 3);
+        $works = $this->workRepository->findPublishedFeatured(6);
+        if ($works === []) {
+            $works = array_slice($this->workRepository->findPublishedOrdered(), 0, 6);
+        }
 
         return $this->render('public/home.html.twig', [
             'page' => $page,
             'works' => $works,
+            'uiTheme' => 'blood-angels',
         ]);
     }
 
     #[Route('/contacts', name: 'app_contacts', methods: ['GET'])]
     public function contacts(): Response
     {
+        $page = $this->getSystemPageOr404('contacts');
+
         return $this->render('public/static_page.html.twig', [
-            'page' => $this->getSystemPageOr404('contacts'),
+            'page' => $page,
+            'uiTheme' => $this->resolveThemeForPage($page),
         ]);
     }
 
     #[Route('/gallery', name: 'app_gallery', methods: ['GET'])]
     public function gallery(): Response
     {
+        $page = $this->getSystemPageOr404('gallery');
+
         return $this->render('public/gallery.html.twig', [
-            'page' => $this->getSystemPageOr404('gallery'),
+            'page' => $page,
             'works' => $this->workRepository->findPublishedOrdered(),
+            'uiTheme' => $this->resolveThemeForPage($page),
         ]);
     }
 
@@ -64,12 +74,15 @@ class PublicController extends AbstractController
         return $this->render('public/work_show.html.twig', [
             'work' => $work,
             'photos' => $work->getPublishedPhotos(),
+            'uiTheme' => $work->getVisualTheme(),
         ]);
     }
 
     #[Route('/feedback', name: 'app_feedback', methods: ['GET', 'POST'])]
     public function feedback(Request $request): Response
     {
+        $page = $this->getSystemPageOr404('feedback');
+
         $feedback = new FeedbackMessage();
         $form = $this->createForm(FeedbackMessageType::class, $feedback);
         $form->handleRequest($request);
@@ -84,8 +97,9 @@ class PublicController extends AbstractController
         }
 
         return $this->render('public/feedback.html.twig', [
-            'page' => $this->getSystemPageOr404('feedback'),
+            'page' => $page,
             'form' => $form,
+            'uiTheme' => $this->resolveThemeForPage($page),
         ]);
     }
 
@@ -99,6 +113,7 @@ class PublicController extends AbstractController
 
         return $this->render('public/static_page.html.twig', [
             'page' => $page,
+            'uiTheme' => $this->resolveThemeForPage($page),
         ]);
     }
 
@@ -110,5 +125,22 @@ class PublicController extends AbstractController
         }
 
         return $page;
+    }
+
+    private function resolveThemeForPage(Page $page): string
+    {
+        $scope = mb_strtolower(trim(sprintf('%s %s %s', $page->getSlug(), $page->getSystemKey(), $page->getTitle())));
+
+        if (str_contains($scope, 'heresy')) {
+            return 'sons-of-horus';
+        }
+
+        if (str_contains($scope, 'aos')
+            || str_contains($scope, 'sigmar')
+            || str_contains($scope, 'stormcast')) {
+            return 'stormcast';
+        }
+
+        return 'blood-angels';
     }
 }

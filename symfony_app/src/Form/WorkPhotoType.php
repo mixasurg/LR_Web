@@ -27,7 +27,7 @@ class WorkPhotoType extends AbstractType
             ])
             ->add('imagePath', TextType::class, [
                 'label' => 'Путь к изображению',
-                'help' => 'Например: uploads/legacy/40k/Captain1.jpg',
+                'help' => 'Например: mixas-works/40k/Captain1.jpg (без домена)',
             ])
             ->add('caption', TextType::class, [
                 'label' => 'Подпись к фото',
