@@ -6,15 +6,23 @@ namespace App\Twig;
 
 use App\Entity\Page;
 use App\Repository\PageRepository;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class NavigationExtension extends AbstractExtension
 {
+    private const NAVIGATION_CACHE_KEY = 'public.navigation.pages.v1';
+    private const NAVIGATION_CACHE_TTL_SECONDS = 600;
+
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        #[Autowire(service: 'cache.app')]
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -30,15 +38,19 @@ class NavigationExtension extends AbstractExtension
      */
     public function getNavigationPages(): array
     {
-        $result = [];
-        foreach ($this->pageRepository->findVisibleForMenu() as $page) {
-            $result[] = [
-                'label' => $page->getMenuLabel(),
-                'url' => $this->resolveUrl($page),
-            ];
-        }
+        return $this->cache->get(self::NAVIGATION_CACHE_KEY, function (ItemInterface $item): array {
+            $item->expiresAfter(self::NAVIGATION_CACHE_TTL_SECONDS);
 
-        return $result;
+            $result = [];
+            foreach ($this->pageRepository->findVisibleForMenu() as $page) {
+                $result[] = [
+                    'label' => $page->getMenuLabel(),
+                    'url' => $this->resolveUrl($page),
+                ];
+            }
+
+            return $result;
+        });
     }
 
     private function resolveUrl(Page $page): string
